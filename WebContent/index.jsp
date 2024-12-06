@@ -1,102 +1,102 @@
+<%@ include file="jdbc.jsp" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group95's Grocery Main Page</title>
-    <!-- Add Bootstrap CSS for a more professional look -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
+    <title>Ray's Grocery Main Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-primary': '#3498db',
+                        'brand-green': '#2ecc71',
+                        'brand-gray': '#95a5a6',
+                        'brand-dark': '#34495e'
+                    }
+                }
+            }
         }
-        .container {
-            max-width: 960px;
-            margin: 30px auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            font-size: 3rem;
-            color: #4CAF50;
-        }
-        h2, h3, h4 {
-            color: #333;
-        }
-        .nav-link {
-            font-size: 1.25rem;
-            color: #007BFF;
-            text-decoration: none;
-            padding: 10px;
-        }
-        .nav-link:hover {
-            color: #0056b3;
-            text-decoration: underline;
-        }
-        .test-links a {
-            font-size: 1.1rem;
-            color: #6c757d;
-            text-decoration: none;
-            padding: 8px;
-        }
-        .test-links a:hover {
-            color: #343a40;
-            text-decoration: underline;
-        }
-        .logout-btn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1.25rem;
-            cursor: pointer;
-            border-radius: 4px;
-            width: 100%;
-            margin-top: 20px;
-        }
-        .logout-btn:hover {
-            background-color: #c82333;
-        }
-    </style>
+    </script>
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-brand-primary text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="text-lg font-bold">Ray's Grocery</a>
+            <ul class="flex space-x-6">
+                <li><a href="login.jsp" class="hover:text-gray-200">Login</a></li>
+                <li><a href="listprod.jsp" class="hover:text-gray-200">Begin Shopping</a></li>
+                <li><a href="listbycategory.jsp" class="hover:text-gray-200">Shop by Category</a></li>
+                <li><a href="listorder.jsp" class="hover:text-gray-200">List All Orders</a></li>
+                <li><a href="customer.jsp" class="hover:text-gray-200">Customer Info</a></li>
+                <li><a href="admin.jsp" class="hover:text-gray-200">Administrators</a></li>
+                <li><a href="logout.jsp" class="hover:text-gray-200">Log out</a></li>
+            </ul>
+        </div>
+    </nav>
 
-<!-- Main Content Wrapper -->
-<div class="container">
-    <!-- Main Heading -->
-    <h1 class="text-center mb-4">Welcome to Group95's Grocery</h1>
+    <!-- Welcome Section -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center">
+            <h1 class="text-4xl font-extrabold text-gray-800">Welcome to Ray's Grocery</h1>
+        </div>
 
-    <!-- Navigation Links -->
-    <div class="text-center mb-4">
-        <h2><a href="login.jsp" class="nav-link">Login</a></h2>
-        <h2><a href="shop.html" class="nav-link">Begin Shopping</a></h2>
-        <h2><a href="listorder.jsp" class="nav-link">List All Orders</a></h2>
-        <h2><a href="customer.jsp" class="nav-link">Customer Info</a></h2>
-        <h2><a href="admin.jsp" class="nav-link">Administrators</a></h2>
+        <!-- Top Products Section -->
+        <div class="mt-10">
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Top 5 Products by Total Sales</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <% 
+                    try {
+                        getConnection();
+                        String query = "SELECT TOP 5 p.productId, p.productName, p.productImageURL FROM product p JOIN orderproduct op ON p.productId = op.productId " +
+                                       "GROUP BY p.productId, p.productName, p.productImageURL ORDER BY SUM(op.quantity) DESC";
+                        Statement stmt = con.createStatement();
+                        ResultSet rs = stmt.executeQuery(query);
+                        while (rs.next()) {
+                            String productId = rs.getString("productId");
+                            String productName = rs.getString("productName");
+                            String productImageURL = rs.getString("productImageURL");
+                %>
+                <a href="product.jsp?id=<%= productId %>" class="bg-white shadow-lg rounded-lg overflow-hidden block hover:shadow-xl transition-shadow">
+                    <% if (productImageURL != null && !productImageURL.isEmpty()) { %>
+                        <img src="<%= productImageURL %>" alt="<%= productName %>" class="h-40 w-full object-cover">
+                    <% } else { %>
+                        <div class="h-40 w-full bg-gray-200 flex items-center justify-center">
+                            <span class="text-gray-500 text-sm font-semibold">No Image Available</span>
+                        </div>
+                    <% } %>
+                    <div class="p-4 text-center">
+                        <h5 class="text-lg font-medium text-gray-700"><%= productName %></h5>
+                    </div>
+                </a>
+                <% 
+                        }
+                        rs.close();
+                        stmt.close();
+                        closeConnection();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                %>
+            </div>
+        </div>
     </div>
 
-    <!-- Display Signed in User (if any) -->
-    <div class="text-center mb-4">
-        <% String userName = (String) session.getAttribute("authenticatedUser"); 
-           if (userName != null) { 
-               out.println("<h3>Signed in as: " + userName + "</h3>");
-           } 
-        %>
-    </div>
-
-    <!-- Log Out Button -->
-    <div class="text-center">
-        <form action="logout.jsp" method="post">
-            <button type="submit" class="logout-btn">Log Out</button>
-        </form>
-    </div>
-</div>
-
-<!-- Bootstrap JS (Optional for interactivity) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
+    <!-- Footer -->
+    <footer class="bg-gray-100 py-4 mt-10">
+        <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+            <% 
+                String usersName = (String) session.getAttribute("authenticatedUser"); 
+                if (usersName != null) { 
+            %>
+                <p>Signed in as: <span class="text-brand-primary font-semibold"><%= usersName %></span></p>
+            <% } else { %>
+                <p>Welcome, Guest!</p>
+            <% } %>
+        </div>
+    </footer>
 </body>
 </html>

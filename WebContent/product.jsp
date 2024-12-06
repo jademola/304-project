@@ -1,215 +1,208 @@
 <%@ page import="java.util.HashMap" %>
-<%@ page import="java.sql.*, java.text.NumberFormat" %>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
-<%@ include file="jdbc.jsp" %>
-
+<%@ page import="java.sql.*, java.text.NumberFormat, java.net.URLEncoder" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="jdbc.jsp"%>
+<%@ include file="auth.jsp" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Group95's Grocery - Product Information</title>
-    <!-- Link to Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ray's Grocery - Product Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-green': '#2ecc71',
+                        'brand-gray': '#95a5a6'
+                    }
+                }
+            }
         }
-        .product-container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .product-title {
-            color: #007bff;
-        }
-        .product-image {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .product-image img {
-            max-width: 100%;
-            border-radius: 10px;
-        }
-        .product-details p {
-            margin: 10px 0;
-        }
-        .actions {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .actions a {
-            margin: 5px;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 5px;
-            color: white;
-            background-color: #007bff;
-        }
-        .actions a:hover {
-            background-color: #0056b3;
-        }
-        .actions a.continue-shopping {
-            background-color: #6c757d;
-        }
-        .actions a.continue-shopping:hover {
-            background-color: #5a6268;
-        }
-        .reviews-section {
-            margin-top: 30px;
-            border-top: 1px solid #e0e0e0;
-            padding-top: 20px;
-        }
-        .review-card {
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        .star-rating {
-            color: #ffc107;
-        }
-        .submit-review-form {
-            background-color: #f1f3f5;
-            padding: 20px;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-    </style>
+    </script>
 </head>
-<body>
-
-<%@ include file="header.jsp" %>
-
-<div class="product-container">
-    <%
-    PreparedStatement pstmt = null;
-    ResultSet rstProduct = null;
-    ResultSet rstReviews = null;
-
-    String productId = request.getParameter("id");
-
-    try {
-        getConnection();
-
-        // Fetch Product Details
-        String sqlProduct = "SELECT productId, productName, productPrice, productImageURL FROM product WHERE productId = ?";
-        pstmt = con.prepareStatement(sqlProduct);
-        pstmt.setInt(1, Integer.parseInt(productId));
-        rstProduct = pstmt.executeQuery();
-
-        NumberFormat currFormat = NumberFormat.getCurrencyInstance();
-
-        while (rstProduct.next()) {
-            String productName = rstProduct.getString("productName");
-            Double price = rstProduct.getDouble("productPrice");
-            String priceFormatted = currFormat.format(price);
-            String url = rstProduct.getString("productImageURL");
-    %>
-    <h2 class="product-title"><%= productName %></h2>
-
-    <div class="product-image">
-        <% if (url != null && !url.isEmpty()) { %>
-            <img src="<%= url %>" alt="<%= productName %>">
-        <% } else { %>
-            <p>No image available for this product.</p>
-        <% } %>
-    </div>
-
-    <div class="product-details">
-        <p><strong>Product ID:</strong> <%= rstProduct.getInt("productId") %></p>
-        <p><strong>Price:</strong> <%= priceFormatted %></p>
-    </div>
-
-    <div class="actions">
-        <% 
-        String addToCartLink = "addcart.jsp?id=" + productId + "&name=" + productName + "&price=" + price;
-        %>
-        <a href="<%= addToCartLink %>">Add to Cart</a>
-        <a href="listprod.jsp" class="continue-shopping">Continue Shopping</a>
-    </div>
-
-    <!-- Reviews Section -->
-    <div class="reviews-section">
-        <h3>Customer Reviews</h3>
-        
+<body class="bg-gray-50 min-h-screen">
+    <%@ include file="header.jsp" %>
+    
+    <div class="container mx-auto px-4 py-8">
         <%
-        // Fetch Reviews for this Product
-        String sqlReviews = "SELECT r.reviewId, r.reviewRating, r.reviewDate, r.reviewComment, c.firstName, c.lastName " +
-                            "FROM review r " +
-                            "JOIN customer c ON r.customerId = c.customerId " +
-                            "WHERE r.productId = ? " +
-                            "ORDER BY r.reviewDate DESC";
-        pstmt = con.prepareStatement(sqlReviews);
-        pstmt.setInt(1, Integer.parseInt(productId));
-        rstReviews = pstmt.executeQuery();
-
-        boolean hasReviews = false;
-        while (rstReviews.next()) {
-            hasReviews = true;
-            int rating = rstReviews.getInt("reviewRating");
-            String comment = rstReviews.getString("reviewComment");
-            String reviewerName = rstReviews.getString("firstName") + " " + rstReviews.getString("lastName");
-            Timestamp reviewDate = rstReviews.getTimestamp("reviewDate");
+        PreparedStatement pstmt = null;
+        ResultSet rstProduct = null;
+        String productId = request.getParameter("id");
+        
+        try {
+            getConnection();
+            String sql = "SELECT p.productId, p.productName, p.productPrice, p.productImageURL, p.productDesc, c.categoryName FROM product p JOIN category c ON p.categoryId = c.categoryId WHERE p.productId = ?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, Integer.parseInt(productId));
+            rstProduct = pstmt.executeQuery();
+            
+            NumberFormat currFormat = NumberFormat.getCurrencyInstance();
+            
+            if (rstProduct.next()) {
+                String productName = rstProduct.getString("productName");
+                Double price = rstProduct.getDouble("productPrice");
+                String priceFormatted = currFormat.format(price);
+                String url = rstProduct.getString("productImageURL");
+                String description = rstProduct.getString("productDesc");
+                String category = rstProduct.getString("categoryName");
+                int productIdDB = rstProduct.getInt("productId");
         %>
-            <div class="review-card">
-                <div class="star-rating">
-                    <% for(int i = 1; i <= 5; i++) { %>
-                        <span style="color: <%= i <= rating ? "#ffc107" : "#e0e0e0" %>">&#9733;</span>
-                    <% } %>
-                </div>
-                <p class="review-text"><%= comment %></p>
-                <small class="text-muted">
-                    By <%= reviewerName %> on <%= new java.text.SimpleDateFormat("MMMM d, yyyy").format(reviewDate) %>
-                </small>
+        <div class="grid md:grid-cols-2 gap-8 bg-white shadow-lg rounded-lg p-6">
+            <div class="flex justify-center items-center">
+                <% if (url != null && !url.isEmpty()) { %>
+                    <img src="<%= url %>" alt="<%= productName %>" 
+                         class="max-w-full max-h-96 object-contain rounded-lg shadow-md">
+                <% } else if (productIdDB == 1) { %>
+                    <img src="displayImage.jsp?id=<%= productId %>" 
+                         class="max-w-full max-h-96 object-contain rounded-lg shadow-md">
+                <% } else { %>
+                    <div class="w-full h-96 bg-gray-200 flex items-center justify-center rounded-lg">
+                        <span class="text-gray-500">No Image Available</span>
+                    </div>
+                <% } %>
             </div>
-        <% } %>
-
-        <% if (!hasReviews) { %>
-            <p class="text-center text-muted">No reviews yet. Be the first to review!</p>
-        <% } %>
-
-        <!-- Submit Review Form -->
-        <div class="submit-review-form">
-            <h4>Write a Review</h4>
-            <form action="submitReview.jsp" method="post">
-                <input type="hidden" name="productId" value="<%= productId %>">
-                <div class="mb-3">
-                    <label for="reviewRating" class="form-label">Rating</label>
-                    <select class="form-select" id="reviewRating" name="reviewRating" required>
-                        <option value="">Select a Rating</option>
-                        <option value="5">5 - Excellent</option>
-                        <option value="4">4 - Very Good</option>
-                        <option value="3">3 - Good</option>
-                        <option value="2">2 - Fair</option>
-                        <option value="1">1 - Poor</option>
-                    </select>
+            
+            <div class="space-y-4">
+                <h1 class="text-3xl font-bold text-gray-800"><%= productName %></h1>
+                
+                <div class="flex items-center space-x-4">
+                    <span class="text-2xl font-semibold text-brand-green"><%= priceFormatted %></span>
+                    <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        Product ID: <%= productId %>
+                    </span>
                 </div>
-                <div class="mb-3">
-                    <label for="reviewComment" class="form-label">Review</label>
-                    <textarea class="form-control" id="reviewComment" name="reviewComment" rows="4" required placeholder="Tell us about your experience"></textarea>
+                
+                <div class="text-sm text-gray-600">
+                    <strong>Category:</strong> <%= category %>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit Review</button>
-            </form>
+                
+                <% if (description != null && !description.isEmpty()) { %>
+                    <div class="text-gray-700 leading-relaxed">
+                        <%= description %>
+                    </div>
+                <% } %>
+                
+                <div class="flex space-x-4 pt-4">
+                    <% 
+                    String encodedProductName = URLEncoder.encode(productName, "UTF-8");
+                    String addToCartLink = "addcart.jsp?id=" + productId + 
+                                           "&name=" + encodedProductName + 
+                                           "&price=" + price; 
+                    %>
+                    <a href="<%= addToCartLink %>" 
+                       class="flex-1 bg-brand-green hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 text-center">
+                        Add to Cart
+                    </a>
+                    <a href="listprod.jsp" 
+                       class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition duration-300 text-center">
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
+        
+        <% 
+            // Fetch and display reviews section
+            String reviewSql = "SELECT r.reviewRating, r.reviewComment, c.firstName, r.reviewDate FROM review r JOIN customer c ON r.customerId = c.customerId WHERE r.productId = ? ORDER BY r.reviewDate DESC";
+            PreparedStatement reviewStmt = con.prepareStatement(reviewSql);
+            reviewStmt.setInt(1, Integer.parseInt(productId));
+            ResultSet reviewRs = reviewStmt.executeQuery();
+        %>
+        <div class="mt-8 bg-white shadow-lg rounded-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Customer Reviews</h2>
+            <% 
+            boolean hasReviews = false;
+            while (reviewRs.next()) { 
+                hasReviews = true;
+            %>
+                <div class="border-b pb-4 mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2">
+                            <strong class="text-gray-700"><%= reviewRs.getString("firstName") %></strong>
+                            <span class="text-sm text-gray-500">
+                                <%= new java.text.SimpleDateFormat("MMMM dd, yyyy").format(reviewRs.getTimestamp("reviewDate")) %>
+                            </span>
+                        </div>
+                        <div class="text-yellow-500">
+                            <% 
+                            int rating = reviewRs.getInt("reviewRating");
+                            for (int i = 0; i < 5; i++) { 
+                                if (i < rating) { 
+                            %>
+                                ★
+                            <% } else { %>
+                                ☆
+                            <% } 
+                            } %>
+                        </div>
+                    </div>
+                    <p class="text-gray-600"><%= reviewRs.getString("reviewComment") %></p>
+                </div>
+            <% } 
+            
+            if (!hasReviews) { %>
+                <p class="text-gray-500 italic">No reviews yet for this product.</p>
+            <% } %>
+        </div>
+        <div class="mt-8 bg-white shadow-lg rounded-lg p-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Write a Review</h2>
     <%
-        }
-    } catch (SQLException e) {
-        e.printStackTrace(new java.io.PrintWriter(out));
-    } finally {
-        if (pstmt != null) pstmt.close();
-        if (rstReviews != null) rstReviews.close();
-        if (con != null) closeConnection();
+    // Check if the customer has already reviewed this product
+    String checkReviewSql = "SELECT COUNT(*) AS reviewCount FROM review WHERE productId = ? AND customerId = ?";
+    PreparedStatement checkReviewStmt = con.prepareStatement(checkReviewSql);
+    checkReviewStmt.setInt(1, Integer.parseInt(productId));
+    checkReviewStmt.setInt(2, Integer.parseInt((String) session.getAttribute("customerId")));
+    ResultSet checkReviewRs = checkReviewStmt.executeQuery();
+    
+    boolean canReview = true;
+    if (checkReviewRs.next() && checkReviewRs.getInt("reviewCount") > 0) {
+        canReview = false;
     }
+    
+    if (canReview) {
     %>
+    <form method="post" action="submitReview.jsp" class="space-y-4">
+        <input type="hidden" name="productId" value="<%= productId %>">
+        <div>
+            <label for="reviewRating" class="block text-gray-700 font-bold mb-2">Rating (1 to 5)</label>
+            <select id="reviewRating" name="reviewRating" required 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-green">
+                <option value="">-- Select a Rating --</option>
+                <option value="1">1 - Very Bad</option>
+                <option value="2">2 - Bad</option>
+                <option value="3">3 - Average</option>
+                <option value="4">4 - Good</option>
+                <option value="5">5 - Excellent</option>
+            </select>
+        </div>
+        <div>
+            <label for="reviewComment" class="block text-gray-700 font-bold mb-2">Comment</label>
+            <textarea id="reviewComment" name="reviewComment" rows="4" required 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-green"></textarea>
+        </div>
+        <button type="submit" 
+                class="bg-brand-green hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+            Submit Review
+        </button>
+    </form>
+    <%
+    } else {
+    %>
+    <p class="text-gray-500 italic">You have already reviewed this product.</p>
+    <% } %>
 </div>
-
-<!-- Include Bootstrap JS (optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+        <%
+            } // end product result if
+        } catch (SQLException e) {
+            e.printStackTrace(new java.io.PrintWriter(out));
+        } finally {
+            if (pstmt != null) pstmt.close();
+            if (con != null) closeConnection();
+        }
+        %>
+    </div>
 </body>
 </html>
-

@@ -1,91 +1,63 @@
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.*, java.util.Date" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="jdbc.jsp" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
-
 <%
-// Get parameters from the form
-int productId = Integer.parseInt(request.getParameter("productId"));
-int rating = Integer.parseInt(request.getParameter("reviewRating"));
-String comment = request.getParameter("reviewComment");
+String customerId = (String) session.getAttribute("customerId");
+if (customerId == null || customerId.isEmpty()) {
+    response.sendRedirect("login.jsp");
+    return;
+}
 
-Integer customerId = (Integer)session.getAttribute("customerId");
+String productId = request.getParameter("productId");
+String reviewRating = request.getParameter("reviewRating");
+String reviewComment = request.getParameter("reviewComment");
 
-if (customerId == null) {
-    response.sendRedirect("login.jsp?error=Please log in to submit a review");
+if (productId == null || reviewRating == null || reviewComment == null) {
+    response.sendRedirect("product.jsp?id=" + productId);
     return;
 }
 
 PreparedStatement pstmt = null;
-ResultSet rs = null;
 
 try {
     getConnection();
-    
-    // Check if the user has purchased this product
-    String sqlCheckPurchase = "SELECT orderproduct.orderId " +
-                               "FROM orderproduct " +
-                               "JOIN ordersummary ON orderproduct.orderId = ordersummary.orderId " +
-                               "WHERE ordersummary.customerId = ? AND orderproduct.productId = ?";
-    pstmt = con.prepareStatement(sqlCheckPurchase);
-    pstmt.setInt(1, customerId);
-    pstmt.setInt(2, productId);
-    rs = pstmt.executeQuery();
-    
-    if (!rs.next()) {
-        // User has not purchased the product
-        response.sendRedirect("product.jsp?id=" + productId + "&reviewError=You must purchase this product to leave a review");
+
+    // Check if the customer has already reviewed this product
+    String checkReviewSql = "SELECT COUNT(*) AS reviewCount FROM review WHERE productId = ? AND customerId = ?";
+    pstmt = con.prepareStatement(checkReviewSql);
+    pstmt.setInt(1, Integer.parseInt(productId));
+    pstmt.setInt(2, Integer.parseInt(customerId));
+    ResultSet rs = pstmt.executeQuery();
+
+    if (rs.next() && rs.getInt("reviewCount") > 0) {
+        session.setAttribute("errorMessage", "You have already reviewed this product.");
+        response.sendRedirect("product.jsp?id=" + productId);
         return;
     }
-    
-    // Check if user has already reviewed this product
-    rs.close();
-    pstmt.close();
-    
-    String sqlCheckReview = "SELECT reviewId FROM review " +
-                             "WHERE customerId = ? AND productId = ?";
-    pstmt = con.prepareStatement(sqlCheckReview);
-    pstmt.setInt(1, customerId);
-    pstmt.setInt(2, productId);
-    rs = pstmt.executeQuery();
-    
-    if (rs.next()) {
-        // User has already reviewed this product
-        response.sendRedirect("product.jsp?id=" + productId + "&reviewError=You have already reviewed this product");
-        return;
-    }
-    
-    // If we've made it this far, insert the review
-    rs.close();
-    pstmt.close();
-    
-    String sqlInsertReview = "INSERT INTO review (reviewRating, reviewDate, customerId, productId, reviewComment) " +
-                              "VALUES (?, GETDATE(), ?, ?, ?)";
-    
-    pstmt = con.prepareStatement(sqlInsertReview);
-    pstmt.setInt(1, rating);
-    pstmt.setInt(2, customerId);
-    pstmt.setInt(3, productId);
-    pstmt.setString(4, comment);
-    
+
+    // Insert the new review
+    String insertReviewSql = "INSERT INTO review (productId, customerId, reviewRating, reviewComment, reviewDate) VALUES (?, ?, ?, ?, ?)";
+    pstmt = con.prepareStatement(insertReviewSql);
+    pstmt.setInt(1, Integer.parseInt(productId));
+    pstmt.setInt(2, Integer.parseInt(customerId));
+    pstmt.setInt(3, Integer.parseInt(reviewRating));
+    pstmt.setString(4, reviewComment);
+    pstmt.setTimestamp(5, new java.sql.Timestamp(new Date().getTime()));
+
     int rowsAffected = pstmt.executeUpdate();
-    
     if (rowsAffected > 0) {
-        // Redirect back to the product page with a success message
-        response.sendRedirect("product.jsp?id=" + productId + "&reviewSubmitted=true");
+        session.setAttribute("successMessage", "Thank you for your review!");
     } else {
-        // Handle submission failure
-        response.sendRedirect("product.jsp?id=" + productId + "&reviewSubmitted=false");
+        session.setAttribute("errorMessage", "Failed to submit your review. Please try again.");
     }
+
+    response.sendRedirect("product.jsp?id=" + productId);
 } catch (SQLException e) {
     e.printStackTrace(new java.io.PrintWriter(out));
-    response.sendRedirect("product.jsp?id=" + productId + "&reviewSubmitted=false&error=" + e.getMessage());
+    session.setAttribute("errorMessage", "An error occurred: " + e.getMessage());
+    response.sendRedirect("product.jsp?id=" + productId);
 } finally {
-    try {
-        if (rs != null) rs.close();
-        if (pstmt != null) pstmt.close();
-        if (con != null) closeConnection();
-    } catch (SQLException e) {
-        e.printStackTrace(new java.io.PrintWriter(out));
-    }
+    if (pstmt != null) pstmt.close();
+    if (con != null) closeConnection();
 }
 %>

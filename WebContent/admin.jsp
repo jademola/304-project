@@ -9,33 +9,41 @@
 <%
 // TODO: Include files auth.jsp and jdbc.jsp
 %>
+
 <%@ include file = "auth.jsp" %>
 <%@ include file = "jdbc.jsp" %>
-<h1>Daily Sales Report For Administrator</h1>
+
 <%
+
 // Format for currency
 NumberFormat currFormat = NumberFormat.getCurrencyInstance();
+
 // TODO: Write SQL query that prints out total order amount by day
-String sql = "SELECT CAST(orderDate AS DATE) as OrderDate, SUM(totalAmount) AS total FROM ordersummary GROUP BY CAST(orderDate AS DATE) as OrderDate ORDER BY OrderDate";
-String url = "jdbc:sqlserver://cosc304_sqlserver:1433;DatabaseName=orders;TrustServerCertificate=True";
-String uid = "sa";
-String pw = "304#sa#pw";
-try(Connection con = DriverManager.getConnection(url, uid, pw);
-Statement stmt = con.createStatement();){
-    PreparedStatement pstmt = con.prepareStatement("SELECT customerId, firstName, lastName, email, phoneNum, address, city, state, postalCode, country, userid FROM customer WHERE userid = ?;");
-	ResultSet rst = stmt.executeQuery(sql); 
-    out.println("<table class='table' border='1'><tr><th>Order Date</th><th>Total Order Amount</th>");
-	while (rst.next()){
-        out.println("<tr><td>" + rst.getString(1) + "</td><td>" + rst.getString(2) + "</td></tr>");
-    }
-    out.println("</table>");
-	rst.close();
-	stmt.close();
-	con.close(); 
-} catch (SQLException ex) {
-	out.println("SQLException: " + ex);
+getConnection();
+
+String sql = "SELECT orderDate, SUM(totalAmount) AS total FROM ordersummary GROUP BY orderDate";
+Statement stmt = con.createStatement();
+ResultSet rst = stmt.executeQuery(sql);
+
+
+out.println("<h2>Sales Report by Date</h2>");
+out.println("<table border='2'>");
+out.println("<tr><th>Date</th><th>Total Amount</th></tr>");
+
+while(rst.next()) {
+    // set string values from ResultSet
+    Date date = rst.getDate("orderDate");
+    String dateString = (date != null) ? date.toString() : "N/A";
+    String totalAmount = currFormat.format(rst.getDouble("total"));
+
+
+
+    out.println("<tr>");
+        out.println("<td>" + dateString + "</td>");
+        out.println("<td>" + totalAmount + "</td>");
+    out.println("</tr>");
 }
-out.println("<h2><a href='index.jsp'>Back to Main Page</a></h2>");
+
 %>
 
 </body>

@@ -116,7 +116,7 @@
             if (connection != null) try { connection.setAutoCommit(true); } catch (Exception e) {}
         }
     }
-
+%>
 <h2><a href="shop.html">Back to Main Page</a></h2>
 
 </body>
