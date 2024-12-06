@@ -9,12 +9,12 @@
 
 <html>
 <head>
-<title>Group95 Grocery Shipment Processing</title>
+<title>95AJ Industries Shipment Processing</title>
 </head>
 <body>
         
 <%@ include file="header.jsp" %>
-<h1 style="text-align: center;">Ray's Grocery</h1>
+<h1 style="text-align: center;">95AJ Industries</h1>
 <%
 	String url = "jdbc:sqlserver://cosc304-sqlserver:1433;DatabaseName=orders;TrustServerCertificate=True"; 
 	String uid = "sa"; 
