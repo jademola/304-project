@@ -57,6 +57,26 @@
         .actions a.continue-shopping:hover {
             background-color: #5a6268;
         }
+        .reviews-section {
+            margin-top: 30px;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 20px;
+        }
+        .review-card {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .star-rating {
+            color: #ffc107;
+        }
+        .submit-review-form {
+            background-color: #f1f3f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -67,14 +87,16 @@
     <%
     PreparedStatement pstmt = null;
     ResultSet rstProduct = null;
+    ResultSet rstReviews = null;
 
     String productId = request.getParameter("id");
 
     try {
         getConnection();
 
-        String sql = "SELECT productId, productName, productPrice, productImageURL FROM product WHERE productId = ?";
-        pstmt = con.prepareStatement(sql);
+        // Fetch Product Details
+        String sqlProduct = "SELECT productId, productName, productPrice, productImageURL FROM product WHERE productId = ?";
+        pstmt = con.prepareStatement(sqlProduct);
         pstmt.setInt(1, Integer.parseInt(productId));
         rstProduct = pstmt.executeQuery();
 
@@ -85,7 +107,6 @@
             Double price = rstProduct.getDouble("productPrice");
             String priceFormatted = currFormat.format(price);
             String url = rstProduct.getString("productImageURL");
-
     %>
     <h2 class="product-title"><%= productName %></h2>
 
@@ -109,12 +130,78 @@
         <a href="<%= addToCartLink %>">Add to Cart</a>
         <a href="listprod.jsp" class="continue-shopping">Continue Shopping</a>
     </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+        <h3>Customer Reviews</h3>
+        
+        <%
+        // Fetch Reviews for this Product
+        String sqlReviews = "SELECT r.reviewId, r.reviewRating, r.reviewDate, r.reviewComment, c.firstName, c.lastName " +
+                            "FROM review r " +
+                            "JOIN customer c ON r.customerId = c.customerId " +
+                            "WHERE r.productId = ? " +
+                            "ORDER BY r.reviewDate DESC";
+        pstmt = con.prepareStatement(sqlReviews);
+        pstmt.setInt(1, Integer.parseInt(productId));
+        rstReviews = pstmt.executeQuery();
+
+        boolean hasReviews = false;
+        while (rstReviews.next()) {
+            hasReviews = true;
+            int rating = rstReviews.getInt("reviewRating");
+            String comment = rstReviews.getString("reviewComment");
+            String reviewerName = rstReviews.getString("firstName") + " " + rstReviews.getString("lastName");
+            Timestamp reviewDate = rstReviews.getTimestamp("reviewDate");
+        %>
+            <div class="review-card">
+                <div class="star-rating">
+                    <% for(int i = 1; i <= 5; i++) { %>
+                        <span style="color: <%= i <= rating ? "#ffc107" : "#e0e0e0" %>">&#9733;</span>
+                    <% } %>
+                </div>
+                <p class="review-text"><%= comment %></p>
+                <small class="text-muted">
+                    By <%= reviewerName %> on <%= new java.text.SimpleDateFormat("MMMM d, yyyy").format(reviewDate) %>
+                </small>
+            </div>
+        <% } %>
+
+        <% if (!hasReviews) { %>
+            <p class="text-center text-muted">No reviews yet. Be the first to review!</p>
+        <% } %>
+
+        <!-- Submit Review Form -->
+        <div class="submit-review-form">
+            <h4>Write a Review</h4>
+            <form action="submitReview.jsp" method="post">
+                <input type="hidden" name="productId" value="<%= productId %>">
+                <div class="mb-3">
+                    <label for="reviewRating" class="form-label">Rating</label>
+                    <select class="form-select" id="reviewRating" name="reviewRating" required>
+                        <option value="">Select a Rating</option>
+                        <option value="5">5 - Excellent</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="3">3 - Good</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="1">1 - Poor</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="reviewComment" class="form-label">Review</label>
+                    <textarea class="form-control" id="reviewComment" name="reviewComment" rows="4" required placeholder="Tell us about your experience"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+            </form>
+        </div>
+    </div>
     <%
         }
     } catch (SQLException e) {
         e.printStackTrace(new java.io.PrintWriter(out));
     } finally {
         if (pstmt != null) pstmt.close();
+        if (rstReviews != null) rstReviews.close();
         if (con != null) closeConnection();
     }
     %>
@@ -125,3 +212,4 @@
 
 </body>
 </html>
+
