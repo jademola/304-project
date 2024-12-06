@@ -49,7 +49,7 @@ try {
 	conn = DriverManager.getConnection(dbURL, dbUser, dbPassword);
 
 	// Prepare SQL query
-	String sql = "SELECT productId, productName, productPrice FROM product WHERE productName LIKE ? OR ";
+	String sql = "SELECT productId, productName, productPrice FROM product WHERE productName LIKE ?";
 	stmt = conn.prepareStatement(sql);
 	stmt.setString(1, "%" + name + "%");
 	rs = stmt.executeQuery();

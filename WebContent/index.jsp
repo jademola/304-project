@@ -10,6 +10,8 @@
 
 <h2 align="center"><a href="listprod.jsp">Begin Shopping</a></h2>
 
+<h2 align="center"><a href="listbycategory.jsp">Shop by Category</a></h2>
+
 <h2 align="center"><a href="listorder.jsp">List All Orders</a></h2>
 
 <h2 align="center"><a href="customer.jsp">Customer Info</a></h2>
