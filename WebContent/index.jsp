@@ -1,10 +1,11 @@
 <%@ include file="jdbc.jsp" %>
+<%@ include file="header.jsp" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>95AJ Industries Main Page</title>
+    <title>95AJ Industries: KeyGalaxy Main Page</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -22,31 +23,16 @@
     </script>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <!-- Navbar -->
-    <nav class="bg-brand-primary text-white shadow-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="#" class="text-lg font-bold">95AJ Industries</a>
-            <ul class="flex space-x-6">
-                <li><a href="login.jsp" class="hover:text-gray-200">Login</a></li>
-                <li><a href="listprod.jsp" class="hover:text-gray-200">Begin Shopping</a></li>
-                <li><a href="listbycategory.jsp" class="hover:text-gray-200">Shop by Category</a></li>
-                <li><a href="listorder.jsp" class="hover:text-gray-200">List All Orders</a></li>
-                <li><a href="customer.jsp" class="hover:text-gray-200">Customer Info</a></li>
-                <li><a href="admin.jsp" class="hover:text-gray-200">Administrators</a></li>
-                <li><a href="logout.jsp" class="hover:text-gray-200">Log out</a></li>
-            </ul>
-        </div>
-    </nav>
 
     <!-- Welcome Section -->
     <div class="container mx-auto px-4 py-8">
         <div class="text-center">
-            <h1 class="text-4xl font-extrabold text-gray-800">Welcome to 95AJ Industries</h1>
+            <h1 class="text-4xl font-extrabold text-gray-800">Welcome to 95AJ Industries: KeyGalaxy</h1>
         </div>
 
         <!-- Top Products Section -->
         <div class="mt-10">
-            <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Top 5 Products by Total Sales</h2>
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Our Best Sellers:</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 <% 
                     try {

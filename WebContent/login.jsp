@@ -1,3 +1,4 @@
+<%@ include file="header.jsp" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,40 +12,48 @@ boolean authenticated = session.getAttribute("authenticatedUser") == null ? fals
 if(authenticated) response.sendRedirect("customer.jsp");
 %>
 
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
-        <h3 class="text-2xl font-bold text-gray-800 text-center mb-6">Please Login to System</h3>
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-        <!-- Display login error message if present -->
-        <%
-        if (session.getAttribute("loginMessage") != null) {
-        %>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center" role="alert">
-                <%= session.getAttribute("loginMessage").toString() %>
-            </div>
-        <%
-        }
-        %>
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center">
+        <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
+            <h3 class="text-2xl font-bold text-gray-800 text-center mb-6">Please Login to System</h3>
 
-        <!-- Login Form -->
-        <form name="MyForm" method="post" action="validateLogin.jsp" class="space-y-4">
-            <div>
-                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                <input type="text" id="username" name="username" maxlength="10" required 
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary">
-            </div>
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input type="password" id="password" name="password" maxlength="10" required 
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary">
-            </div>
-            <div class="flex justify-center">
-                <button type="submit" name="Submit2" 
-                        class="bg-blue-400 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary">
-                    Log In
-                </button>
-            </div>
-        </form>
-    </div>
+            <!-- Display login error message if present -->
+            <%
+            if (session.getAttribute("loginMessage") != null) {
+            %>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 text-center" role="alert">
+                    <%= session.getAttribute("loginMessage").toString() %>
+                </div>
+            <%
+            }
+            %>
+
+            <!-- Login Form -->
+            <form name="MyForm" method="post" action="validateLogin.jsp" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="username" name="username" maxlength="10" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" name="password" maxlength="10" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary">
+                </div>
+                <div class="flex justify-between space-x-4 mt-4">
+                    <button type="submit" name="Submit2" 
+                            class="flex-1 bg-blue-400 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary">
+                        Log In
+                    </button>
+                    <a href="createaccount.jsp" 
+                       class="flex-1 bg-green-500 text-white font-bold py-2 px-6 text-center rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
+                        Register
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
 </body>
 </html>

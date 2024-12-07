@@ -1,4 +1,5 @@
 <%@ page import="java.sql.*,java.text.NumberFormat" %>
+<%@ include file="header.jsp" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8"%>
 <!DOCTYPE html>
 <html lang="en">

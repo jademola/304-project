@@ -21,7 +21,7 @@ services:
                 aliases:
                     - cosc304_mysql
     cosc304-sqlserver:
-        image: mcr.microsoft.com/mssql/server:2019-latest
+        image: mcr.microsoft.com/azure-sql-edge
         container_name: cosc304-sqlserver
         platform: linux/amd64
         restart: always

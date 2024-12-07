@@ -1,4 +1,6 @@
-<%@ page import="java.sql.*, java.text.NumberFormat" %>
+<%@ include file="jdbc.jsp" %>
+<%@ include file="header.jsp" %>
+<%@ page import="java.sql.*, java.text.NumberFormat, java.io.*" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF8" %>
 <!DOCTYPE html>
 <html lang="en">
