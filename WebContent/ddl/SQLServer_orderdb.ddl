@@ -143,44 +143,47 @@ CREATE TABLE review (
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-INSERT INTO category(categoryName) VALUES ('Beverages');
-INSERT INTO category(categoryName) VALUES ('Condiments');
-INSERT INTO category(categoryName) VALUES ('Dairy Products');
-INSERT INTO category(categoryName) VALUES ('Produce');
-INSERT INTO category(categoryName) VALUES ('Meat/Poultry');
-INSERT INTO category(categoryName) VALUES ('Seafood');
-INSERT INTO category(categoryName) VALUES ('Confections');
-INSERT INTO category(categoryName) VALUES ('Grains/Cereals');
+-- Insert updated categories
+INSERT INTO category(categoryName) VALUES ('Keycaps');
+INSERT INTO category(categoryName) VALUES ('Artisan Keycaps');
+INSERT INTO category(categoryName) VALUES ('Keyboard Accessories');
+INSERT INTO category(categoryName) VALUES ('Tools');
+INSERT INTO category(categoryName) VALUES ('Mechanical Keyboards');
+INSERT INTO category(categoryName) VALUES ('Wireless Keyboards');
+INSERT INTO category(categoryName) VALUES ('DIY Kits');
+INSERT INTO category(categoryName) VALUES ('Miscellaneous');
 
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Classic Keycap Set', 1, '104-key ANSI layout', 18.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('PBT Double-Shot Keycaps', 1, '120-key full set', 19.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Artisan Keycap - Galaxy', 2, 'Handcrafted resin cap', 10.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Custom Keycap - Sushi', 2, '3D printed novelty keycap', 22.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Backlit Keycaps - Minimal', 2, '108-key translucent set', 21.35);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('RGB Keycaps - Neon Glow', 2, '87-key TKL set', 25.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Ergonomic Keycap Set', 4, 'Keycaps for split keyboards', 30.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Custom Macro Keycaps', 2, '5 custom macro keys', 40.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Mechanical Keyboard - Aluminum Frame', 5, '87-key TKL layout', 97.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Wireless Keyboard - Compact', 6, '65% layout with Bluetooth', 31.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Keyboard Stabilizers', 3, 'Set of 4 PCB-mount stabilizers', 21.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Lubricant for Switches', 3, '10 ml bottle', 38.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Keycap Puller Tool', 4, 'Steel wire tool', 23.25);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Switch Opener Tool', 2, 'Plastic body, supports MX switches', 15.50);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Keyboard Case - Acrylic', 7, 'Transparent full-size case', 17.45);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Keyboard Wrist Rest', 5, 'Wooden wrist rest for TKL keyboards', 39.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Keycap Set - Gradient', 6, 'Gradient PBT set, 108 keys', 62.50);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Switch Tester Kit', 7, '12 switches with tester frame', 9.20);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('DIY Kit - Hot-Swappable PCB', 7, 'Compact 60% PCB', 81.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Artisan Keycap - Ocean Wave', 7, 'Handcrafted resin cap', 10.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Keyboard Desk Mat', 8, '900 x 400 mm extended mat', 21.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('RGB Lighting Module', 1, 'Programmable 16.8M colors', 14.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Switch Lube Station', 1, 'Acrylic lube station for 35 switches', 18.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Mechanical Keyboard Switches', 6, 'Box of 70 linear switches', 19.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Custom Keycap - Panda', 6, '3D novelty keycap', 18.40);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Compact Keyboard Carry Case', 6, 'Travel-friendly case for 60%', 9.65);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Foam Dampener Kit', 8, 'Sound dampening foam for TKL', 14.00);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('Switch Spring Set', 2, 'Pack of 100 - 65g springs', 21.05);
-INSERT product(productName, categoryId, productDesc, productPrice) VALUES ('RGB Backlit Keycap Set', 1, 'Pudding keycaps, 104 keys', 14.00);
+-- Insert updated products
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Classic Keycap Set', 1, '104-key ANSI layout', 18.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('PBT Double-Shot Keycaps', 1, '120-key full set', 19.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Artisan Keycap - Galaxy', 2, 'Handcrafted resin cap', 10.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Custom Keycap - Sushi', 2, '3D printed novelty keycap', 22.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Backlit Keycaps - Minimal', 1, '108-key translucent set', 21.35);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('RGB Keycaps - Neon Glow', 1, '87-key TKL set', 25.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Ergonomic Keycap Set', 1, 'Keycaps for split keyboards', 30.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Custom Macro Keycaps', 2, '5 custom macro keys', 40.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Mechanical Keyboard - Aluminum Frame', 5, '87-key TKL layout', 97.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Wireless Keyboard - Compact', 6, '65% layout with Bluetooth', 31.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Keyboard Stabilizers', 3, 'Set of 4 PCB-mount stabilizers', 21.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Lubricant for Switches', 3, '10 ml bottle', 38.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Keycap Puller Tool', 4, 'Steel wire tool', 23.25);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Switch Opener Tool', 4, 'Plastic body, supports MX switches', 15.50);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Keyboard Case - Acrylic', 7, 'Transparent full-size case', 17.45);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Keyboard Wrist Rest', 3, 'Wooden wrist rest for TKL keyboards', 39.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Keycap Set - Gradient', 1, 'Gradient PBT set, 108 keys', 62.50);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Switch Tester Kit', 7, '12 switches with tester frame', 9.20);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('DIY Kit - Hot-Swappable PCB', 7, 'Compact 60% PCB', 81.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Artisan Keycap - Ocean Wave', 2, 'Handcrafted resin cap', 10.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Keyboard Desk Mat', 8, '900 x 400 mm extended mat', 21.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('RGB Lighting Module', 3, 'Programmable 16.8M colors', 14.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Switch Lube Station', 3, 'Acrylic lube station for 35 switches', 18.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Mechanical Keyboard Switches', 3, 'Box of 70 linear switches', 19.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Custom Keycap - Panda', 2, '3D novelty keycap', 18.40);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Compact Keyboard Carry Case', 3, 'Travel-friendly case for 60%', 9.65);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Foam Dampener Kit', 3, 'Sound dampening foam for TKL', 14.00);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('Switch Spring Set', 4, 'Pack of 100 - 65g springs', 21.05);
+INSERT INTO product(productName, categoryId, productDesc, productPrice) VALUES ('RGB Backlit Keycap Set', 1, 'Pudding keycaps, 104 keys', 14.00);
+
 
 
 INSERT INTO warehouse(warehouseName) VALUES ('Main warehouse');
@@ -233,7 +236,7 @@ INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId,
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 19, 2, 81)
 INSERT INTO orderproduct (orderId, productId, quantity, price) VALUES (@orderId, 20, 3, 10);
 
--- New SQL DDL for lab 8
+-- New SQL DDL for Images
 UPDATE Product SET productImageURL = 'img/1.jpg' WHERE ProductId = 1;
 UPDATE Product SET productImageURL = 'img/2.jpg' WHERE ProductId = 2;
 UPDATE Product SET productImageURL = 'img/3.jpg' WHERE ProductId = 3;
@@ -249,7 +252,7 @@ UPDATE Product SET productImageURL = 'img/12.jpg' WHERE ProductId = 12;
 UPDATE Product SET productImageURL = 'img/13.jpg' WHERE ProductId = 13;
 UPDATE Product SET productImageURL = 'img/14.jpg' WHERE ProductId = 14;
 UPDATE Product SET productImageURL = 'img/15.jpg' WHERE ProductId = 15;
-UPDATE Product SET productImageURL = 'img/16.jpg' WHERE ProductId = 16;`
+UPDATE Product SET productImageURL = 'img/16.jpg' WHERE ProductId = 16;
 
 
 -- Loads image data for product 1
