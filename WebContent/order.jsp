@@ -1,16 +1,17 @@
+<%@ include file="header.jsp" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.*" %>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Order Confirmation</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-light">
-<div class="container mt-5">
-    <h1 class="text-center mb-4">Order Confirmation</h1>
-    <div class="card p-4 shadow-sm">
+<body class="bg-gray-100">
+<div class="container mx-auto mt-10">
+    <h1 class="text-3xl font-bold text-center mb-8">Order Confirmation</h1>
+    <div class="bg-white shadow-md rounded-lg p-6">
         <%
         String custId = (String) session.getAttribute("customerId");
         @SuppressWarnings("unchecked")
@@ -23,14 +24,18 @@
 
         if (custId == null || custId.isEmpty() || !custId.matches("\\d+")) {
         %>
-        <div class="alert alert-danger">Error: Invalid customer ID.</div>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            Error: Invalid customer ID.
+        </div>
         <%
             return;
         }
 
         if (productList == null || productList.isEmpty()) {
         %>
-        <div class="alert alert-danger">Error: Shopping cart is empty.</div>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            Error: Shopping cart is empty.
+        </div>
         <%
             return;
         }
@@ -44,7 +49,9 @@
             custRs.next();
             if (custRs.getInt(1) == 0) {
         %>
-        <div class="alert alert-danger">Error: Customer ID not found in database.</div>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            Error: Customer ID not found in database.
+        </div>
         <%
                 return;
             }
@@ -85,11 +92,11 @@
             }
             productStmt.executeBatch();
 
-            out.println("<div class='alert alert-success'>Order placed successfully!</div>");
+            out.println("<div class='bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative'>Order placed successfully!</div>");
             out.println("<p>Order ID: <strong>" + orderId + "</strong></p>");
             out.println("<p>Customer ID: <strong>" + custId + "</strong></p>");
             out.println("<p>Total Amount: <strong>$" + totalAmount + "</strong></p>");
-            out.println("<ul>");
+            out.println("<ul class='list-disc list-inside'>");
             for (Map.Entry<String, ArrayList<Object>> entry : productList.entrySet()) {
                 ArrayList<Object> product = entry.getValue();
                 String productName = (String) product.get(1);
@@ -103,20 +110,18 @@
 
             session.removeAttribute("productList");
         } catch (Exception e) {
-            out.println("<div class='alert alert-danger'>Error processing order: " + e + "</div>");
+            out.println("<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative'>Error processing order: " + e + "</div>");
         } finally {
             if (conn != null) {
                 try {
                     conn.close();
                 } catch (SQLException e) {
-                    out.println("<div class='alert alert-danger'>Error closing connection: " + e.getMessage() + "</div>");
+                    out.println("<div class='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative'>Error closing connection: " + e.getMessage() + "</div>");
                 }
             }
         }
         %>
     </div>
 </div>
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
